@@ -18,6 +18,8 @@
   "homepage": "https://github.com/abhishekc97/Image-Gallery#readme",
   "dependencies": {
     "body-parser": "^1.20.1",
-    "express": "^4.18.2"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.0"
   }
 }
