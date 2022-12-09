@@ -33,16 +33,22 @@ app.get("/api/health", function (req, res) {
 });
 
 const imageGallerySchema = new mongoose.Schema({
-    name: String,
-    createdAt: String,
-    updatedAt: String,
+    name: { type: String, required: true },
+    createdAt: Date,
+    updatedAt: Date,
     category: ["category-1", "category-2", "category-3", "category-4"],
     likes: Number,
     imagelink: String,
 });
 
 const galleryCategorySchema = new mongoose.Schema({
-    name: String,
+    name: { type: String, required: true },
     createdAt: String,
     updatedAt: String,
 });
+
+const imageGallery = mongoose.model("ImageGallery", imageGallerySchema);
+const galleryCategory = mongoose.model(
+    "GalleryCategory",
+    galleryCategorySchema
+);
