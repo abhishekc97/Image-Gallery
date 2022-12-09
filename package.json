@@ -1,0 +1,23 @@
+{
+  "name": "image-gallery",
+  "version": "1.0.0",
+  "description": "Backend project pertaining to Micro assessment 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekc97/Image-Gallery.git"
+  },
+  "author": "Abhishek Choudhari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhishekc97/Image-Gallery/issues"
+  },
+  "homepage": "https://github.com/abhishekc97/Image-Gallery#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
+  }
+}
