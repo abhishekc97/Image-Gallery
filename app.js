@@ -31,3 +31,18 @@ app.get("/", function (req, res) {
 app.get("/api/health", function (req, res) {
     res.send("Backend server is active as of time: ");
 });
+
+const imageGallerySchema = new mongoose.Schema({
+    name: String,
+    createdAt: String,
+    updatedAt: String,
+    category: ["category-1", "category-2", "category-3", "category-4"],
+    likes: Number,
+    imagelink: String,
+});
+
+const galleryCategorySchema = new mongoose.Schema({
+    name: String,
+    createdAt: String,
+    updatedAt: String,
+});
