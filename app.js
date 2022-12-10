@@ -88,8 +88,15 @@ app.post("/admin/addImage", function (req, res) {
 
 // error handler middleware
 app.use((req, res, next) => {
-    res.status(404);
+    const err = new Error("not found");
+    err.status(404);
+    next(err);
+});
+
+// express error handler, wherever next is passed, this handles those errors
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
     res.send({
-        error: "404 The page or resource you were looking for was not found",
+        error: { status: err.status || 500, message: err.message },
     });
 });
