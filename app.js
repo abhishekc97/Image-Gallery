@@ -51,7 +51,7 @@ const GalleryCategory = mongoose.model(
 );
 
 // POST request for creating a category
-app.post("/admin/addCategory", function (req, res) {
+app.post("/admin/addCategory", function (req, res, next) {
     const newCategory = new GalleryCategory({
         name: req.body.name,
     });
@@ -68,7 +68,7 @@ app.post("/admin/addCategory", function (req, res) {
 });
 
 // POST request for creating an image
-app.post("/admin/addImage", function (req, res) {
+app.post("/admin/addImage", function (req, res, next) {
     const newImage = new Image({
         name: req.body.name,
         category: req.body.category,
