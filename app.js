@@ -66,3 +66,22 @@ app.post("/admin/addCategory", function (req, res) {
     console.log("New category added");
     res.send("New category added");
 });
+
+// POST request for creating an image
+app.post("/admin/addImage", function (req, res) {
+    const newImage = new Image({
+        name: req.body.name,
+        category: req.body.category,
+        likes: req.body.likes,
+        imageLink: req.body.imageLink,
+    });
+    newImage.save(function (err, newImage) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(newImage + "saved this image.");
+        }
+    });
+    console.log("New image saved");
+    res.send("Image added successfully");
+});
