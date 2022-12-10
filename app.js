@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const mongodb = require("./config/mongodb.js");
@@ -8,9 +7,9 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || "localhost";
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded());
 mongodb();
-
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, function (req, res) {
     console.log(`Express Server has started http://${host}:${port}`);
@@ -71,7 +70,7 @@ app.post("/admin/addCategory", function (req, res, next) {
 app.post("/admin/addImage", function (req, res, next) {
     const newImage = new Image({
         name: req.body.name,
-        category: req.body.category,
+        category: [req.body.category],
         likes: req.body.likes,
         imageLink: req.body.imageLink,
     });
@@ -86,16 +85,28 @@ app.post("/admin/addImage", function (req, res, next) {
     res.send("Image added successfully");
 });
 
+// Api to get all categories
+app.get("/discover/categories", function (req, res, next) {
+    GalleryCategory.find({}, function (err, foundCategories) {
+        if (err) {
+            console.log(err);
+            return;
+        } else {
+            res.send(foundCategories);
+        }
+    });
+});
+
 // error handler middleware
 app.use((req, res, next) => {
     const err = new Error("not found");
-    err.status(404);
+    err.status = 404;
     next(err);
 });
 
 // express error handler, wherever next is passed, this handles those errors
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
+    res.status(err.status || 500); // sets 500 if no error code is set
     res.send({
         error: { status: err.status || 500, message: err.message },
     });
