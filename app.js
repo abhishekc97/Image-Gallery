@@ -85,3 +85,11 @@ app.post("/admin/addImage", function (req, res) {
     console.log("New image saved");
     res.send("Image added successfully");
 });
+
+// error handler middleware
+app.use((req, res, next) => {
+    res.status(404);
+    res.send({
+        error: "404 The page or resource you were looking for was not found",
+    });
+});
