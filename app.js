@@ -1,4 +1,5 @@
 const express = require("express");
+const { forEach } = require("lodash");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const mongodb = require("./config/mongodb.js");
@@ -8,7 +9,7 @@ const host = process.env.HOST || "localhost";
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 mongodb();
 
 app.listen(port, function (req, res) {
@@ -87,7 +88,7 @@ app.post("/admin/addImage", function (req, res, next) {
 
 // Api to get all categories
 app.get("/discover/categories", function (req, res, next) {
-    GalleryCategory.find({}, function (err, foundCategories) {
+    GalleryCategory.find({}, { name: 1 }, function (err, foundCategories) {
         if (err) {
             console.log(err);
             return;
@@ -96,6 +97,25 @@ app.get("/discover/categories", function (req, res, next) {
         }
     });
 });
+
+/** API to find images by a category */
+app.get("/discover/images/:categoryName", function (req, res, next) {
+    var categoryName = req.params.categoryName;
+    const imageSet = [];
+    Image.find(
+        { category: categoryName },
+        { name: 1, category: 1 },
+        function (err, foundImages) {
+            if (err) {
+                console.log(err);
+            }
+            res.json(foundImages);
+            /** important to return res to the callback here itself and not outside find function */
+        }
+    ).limit(4);
+});
+
+/** DO NOT WRITE ANY REGULAR API BELOW THIS */
 
 // error handler middleware
 app.use((req, res, next) => {
@@ -111,3 +131,5 @@ app.use((err, req, res, next) => {
         error: { status: err.status || 500, message: err.message },
     });
 });
+
+/** DO NOT WRITE ANY API BELOW THIS */
