@@ -19,10 +19,11 @@ route.get("/categories", function (req, res, next) {
 /** API to find images by a category */
 /** API to filter image results http://localhost:3000/api/images/:categoryName?sortByDate=asc&sortByLikes=10 */
 
-route.get("/images/:categoryName", async (req, res, next) => {
+route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
     try {
         const categoryName = req.params.categoryName;
-        
+        const shuffle = req.params.shuffle;
+
         /** get query parameters */
         const sortByDate =  req.query.sortByDate;
         const filterByLikes =  req.query.filterByLikes;
@@ -44,13 +45,19 @@ route.get("/images/:categoryName", async (req, res, next) => {
         if(filterByLikes) {
             filter = { likes : filterByLikes};
         }
+        /** setting the skip parameter to 0 or 1 using parseInt */
+        let skip = parseInt(shuffle) || 0;
+
         /** get results by applying all the above conditions */
         const results = await Image.find(
             { category: { $in: [categoryName]},
             ...filter
         }
         ).sort({createdAt: sort})
+        .skip(skip)
         .limit(4);
+
+        /** send the response as JSON */
         res.json(results);
 
     } catch (error) {
