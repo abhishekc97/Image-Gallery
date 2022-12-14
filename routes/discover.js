@@ -28,6 +28,7 @@ route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
         const sortByDate =  req.query.sortByDate;
         const filterByLikes =  req.query.filterByLikes;
 
+        /** send an error if category is not provided */
         if(!categoryName) {
             res.status(400).send("bad request, check your sent parameters");
         }
@@ -66,5 +67,39 @@ route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
     }
 
 });
+
+/** API to like an image */
+route.get("/like/:imageId", async(req, res, next) => {
+    
+    try {
+        const imageId = req.params.imageId;
+        /** send an error if no imageId is provided */
+        if(!imageId) {
+            res.status(400).send("Bad request, Please check the given parameters");
+        }
+
+        let likeValue;
+        const imageFound = Image.find({_id: imageId});
+        
+        // set the likeValue to 0 or 1
+        if(imageFound) {
+            if(imageFound.likes) {
+                likeValue = 0;
+            } else {
+                likeValue = 1;
+            }
+        } 
+        
+        /** update the likes of an image, use $set method on likes field */
+        await Image.updateOne( { _id: imageId }, { $set: {likes: likeValue} });
+
+        res.send("Image has been liked once");
+
+    } catch (error) {
+        console.log(error);
+        next(err);
+    }
+    
+})
 
 module.exports = route;
