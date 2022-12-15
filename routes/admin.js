@@ -1,43 +1,77 @@
 const { Router } = require("express");
 const route = Router();
 
-const GalleryCategory = require("../models/GalleryCategory");
-const Image = require("../models/ImageGallery");
+const GalleryModel = require("../models/GalleryCategory");
+const ImageModel = require("../models/ImageGallery");
 
 // POST request for creating a category
 route.post("/addCategory", function (req, res, next) {
-    const newCategory = new GalleryCategory({
-        name: req.body.name,
-    });
-    newCategory.save(function (err, newCategory) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(newCategory + "saved this category.");
+    try {
+        const newCategoryName = req.body.name;
+        if(!newCategoryName) {
+            res.status(400).send("Bad request, check given parameters");
         }
-    });
 
-    console.log("New category added");
-    res.send("New category added");
+        const newCategory = {
+            name: newCategoryName,
+        };
+
+        GalleryModel.create(newCategory);
+        res.send("New category added");
+        console.log("New category added");
+
+        // if category of same name exists
+        /*
+        GalleryModel.find({name: newCategoryName}, function(err, foundCategories) {
+            if(foundCategories) {
+                foundCategories.forEach(element => {
+                    if(element.name == newCategoryName) {
+                        res.status(409).send("Duplicate record");
+                    }
+                
+                });
+                
+            } else {
+                GalleryModel.create(newCategory);
+                res.send("New category added");
+                console.log("New category added");
+            }
+        } );
+        */
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+    
 });
 
 // POST request for creating an image
-route.post("/addImage", function (req, res, next) {
-    const newImage = new Image({
-        name: req.body.name,
-        category: [req.body.category],
-        likes: req.body.likes,
-        imageLink: req.body.imageLink,
-    });
-    newImage.save(function (err, newImage) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(newImage + "saved this image.");
+route.post("/addImage", async (req, res, next) => {
+    try {
+        const name = req.body.name;
+        const category = req.body.category;
+        const imageLink = req.body.imageLink;
+
+        if(!name || ! category || !imageLink) {
+            res.status(400).send("Bad request");
         }
-    });
-    console.log("New image saved");
-    res.send("Image added successfully");
+
+        const newImage = {
+            name: name,
+            category: category,
+            imageLink: imageLink,
+        };
+        
+        await ImageModel.create(newImage);
+
+        console.log("New image saved");
+        res.send("Image added successfully");
+    
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+    
 });
 
 module.exports = route;

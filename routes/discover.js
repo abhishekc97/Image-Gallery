@@ -1,12 +1,12 @@
 const { Router } = require("express");
 const route = Router();
 
-const GalleryCategory = require("../models/GalleryCategory");
-const Image = require("../models/ImageGallery");
+const GalleryModel = require("../models/GalleryCategory");
+const ImageModel = require("../models/ImageGallery");
 
 // Api to get all categories
 route.get("/categories", function (req, res, next) {
-    GalleryCategory.find({}, { name: 1 }, function (err, foundCategories) {
+    GalleryModel.find({}, { name: 1 }, function (err, foundCategories) {
         if (err) {
             console.log(err);
             return;
@@ -50,7 +50,7 @@ route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
         let skip = parseInt(shuffle) || 0;
 
         /** get results by applying all the above conditions */
-        const results = await Image.find(
+        const results = await ImageModel.find(
             { category: { $in: [categoryName]},
             ...filter
         }
@@ -79,7 +79,7 @@ route.get("/like/:imageId", async(req, res, next) => {
         }
 
         let likeValue;
-        const imageFound = Image.find({_id: imageId});
+        const imageFound = ImageModel.find({_id: imageId});
         
         // set the likeValue to 0 or 1
         if(imageFound) {
