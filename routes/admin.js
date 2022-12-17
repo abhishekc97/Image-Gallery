@@ -11,33 +11,21 @@ route.post("/addCategory", function (req, res, next) {
         if(!newCategoryName) {
             res.status(400).send("Bad request, check given parameters");
         }
-
         const newCategory = {
             name: newCategoryName,
         };
-
-        GalleryModel.create(newCategory);
-        res.send("New category added");
-        console.log("New category added");
-
-        // if category of same name exists
-        /*
-        GalleryModel.find({name: newCategoryName}, function(err, foundCategories) {
-            if(foundCategories) {
-                foundCategories.forEach(element => {
-                    if(element.name == newCategoryName) {
-                        res.status(409).send("Duplicate record");
-                    }
-                
-                });
-                
-            } else {
-                GalleryModel.create(newCategory);
-                res.send("New category added");
-                console.log("New category added");
-            }
-        } );
-        */
+        // find collection for a duplicate, do not use callback 
+        const foundCategory = GalleryModel.find({name: newCategoryName});
+        
+        // make new category accordingly
+        if(foundCategory) {
+            res.status(409).send("Bad request, resource with same name already exists");
+        } else {   
+            GalleryModel.create(newCategory);
+            res.send("New category added");
+            console.log("New category added");
+        }
+      
     } catch (error) {
         console.log(error);
         next(error);

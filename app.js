@@ -1,8 +1,8 @@
 const express = require("express");
-const { forEach } = require("lodash");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
-const mongodb = require("./config/mongodb.js");
+const connectToMongo = require("./config/mongodb.js");
+const cors = require("cors");
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || "localhost";
@@ -10,7 +10,9 @@ const host = process.env.HOST || "localhost";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-mongodb();
+app.use(cors()); // cors()
+
+connectToMongo();
 
 app.listen(port, function (req, res) {
     console.log(`Express Server has started http://${host}:${port}`);

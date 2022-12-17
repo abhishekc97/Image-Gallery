@@ -5,15 +5,17 @@ const GalleryModel = require("../models/GalleryCategory");
 const ImageModel = require("../models/ImageGallery");
 
 // Api to get all categories
-route.get("/categories", function (req, res, next) {
-    GalleryModel.find({}, { name: 1 }, function (err, foundCategories) {
-        if (err) {
-            console.log(err);
-            return;
-        } else {
-            res.send(foundCategories);
-        }
-    });
+route.get("/categories", async function (req, res, next) {
+    try {
+        const categories = await GalleryModel.find({}, { name: 1 });
+        res.send(categories);
+            
+    } catch (error) {
+        console.log(error)
+        next(error);
+    }
+    
+    
 });
 
 /** API to find images by a category */
