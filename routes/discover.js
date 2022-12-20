@@ -7,7 +7,7 @@ const ImageModel = require("../models/ImageGallery");
 // Api to get all categories
 route.get("/categories", async function (req, res, next) {
     try {
-        const categories = await GalleryModel.find({}, { name: 1 });
+        const categories = await GalleryModel.find({}, { name: 1 }).limit(4);
         res.send(categories);
             
     } catch (error) {
@@ -19,17 +19,17 @@ route.get("/categories", async function (req, res, next) {
 });
 
 /** API to find images by a category */
-/** API to filter image results http://localhost:3000/api/images/:categoryName?sortByDate=asc&sortByLikes=10 */
+/** API to filter image results http://localhost:3000/api/images/:categoryName?sortByDate=asc&sortByLikes=1&shuffle=true */
 
-route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
+route.get("/images/:categoryName", async (req, res, next) => {
     try {
+        /** request parameters */
         const categoryName = req.params.categoryName;
-        const shuffle = req.params.shuffle;
-
-        /** get query parameters */
+        
+        /** query parameters */
         const sortByDate =  req.query.sortByDate;
         const filterByLikes =  req.query.filterByLikes;
-
+        const shuffle = req.query.shuffle;
         /** send an error if category is not provided */
         if(!categoryName) {
             res.status(400).send("bad request, check your sent parameters");
@@ -46,8 +46,11 @@ route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
         /** if the filter by likes is given in query string */
         let filter = {};
         if(filterByLikes) {
+            // console.log("here");
             filter = { likes : filterByLikes};
+            // console.log(filter);
         }
+        
         /** setting the skip parameter to 0 or 1 using parseInt */
         let skip = parseInt(shuffle) || 0;
 
@@ -64,8 +67,8 @@ route.get("/images/:categoryName/:shuffle", async (req, res, next) => {
         res.json(results);
 
     } catch (error) {
-        console.log(err);
-        next(err);
+        console.log(error);
+        next(error);
     }
 
 });
@@ -81,25 +84,29 @@ route.get("/like/:imageId", async(req, res, next) => {
         }
 
         let likeValue;
-        const imageFound = ImageModel.find({_id: imageId});
+        const imageFound = await ImageModel.findOne({_id: imageId});
         
         // set the likeValue to 0 or 1
         if(imageFound) {
+
             if(imageFound.likes) {
                 likeValue = 0;
+                console.log("Image has been disliked");
+
             } else {
                 likeValue = 1;
+                console.log("Image has been liked");
             }
         } 
         
         /** update the likes of an image, use $set method on likes field */
-        await Image.updateOne( { _id: imageId }, { $set: {likes: likeValue} });
+        await ImageModel.updateOne( { _id: imageId }, { $set: {likes: likeValue} });
 
-        res.send("Image has been liked once");
+        res.send("Favorite has been updated");
 
     } catch (error) {
         console.log(error);
-        next(err);
+        next(error);
     }
     
 })
