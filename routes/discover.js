@@ -30,6 +30,13 @@ route.get("/images/:categoryName", async (req, res, next) => {
         const sortByDate =  req.query.sortByDate;
         const filterByLikes =  req.query.filterByLikes;
         const shuffle = req.query.shuffle;
+
+        // console.log("shuffle:", shuffle);
+        if(shuffle) {
+            // console.log("shuffle inside backend", shuffle);
+            var randomNumber1 = Math.floor(Math.random() * (3) + 1);
+        }
+        
         /** send an error if category is not provided */
         if(!categoryName) {
             res.status(400).send("bad request, check your sent parameters");
@@ -52,7 +59,8 @@ route.get("/images/:categoryName", async (req, res, next) => {
         }
         
         /** setting the skip parameter to 0 or 1 using parseInt */
-        let skip = parseInt(shuffle) || 0;
+        let skip = randomNumber1;
+        // let skip = parseInt(shuffle) || 0;
 
         /** get results by applying all the above conditions */
         const results = await ImageModel.find(
